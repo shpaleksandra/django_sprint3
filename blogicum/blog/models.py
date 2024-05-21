@@ -12,8 +12,8 @@ class BaseBlogModel(models.Model):
         help_text='Снимите галочку, чтобы скрыть публикацию',
     )
     created_at = models.BooleanField(
-        verbose_name= 'Добавлено',
-        auto_now_add = True,
+        verbose_name='Добавлено',
+        auto_now_add=True,
     )
 
     class Meta:
@@ -21,24 +21,25 @@ class BaseBlogModel(models.Model):
         ordering = ('created_at',)
 
 
-
 class Post(BaseBlogModel):
+    title = models.CharField(max_length=settings.MAXLENGTH, blank=True)
     text = models.TextField()
-    title = models.CharField(max_length = settings.MAXLENGTH, blank = True)
-    author = models.ForeignKey(User, on_delete = models.CASCADE, null = True)
+    pub_date=
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    location=
+    category=
 
     def __str__(self):
         return self.text
-    
+
     class Meta:
         verbose_namee_plural = 'Посты'
 
-class Comment(BaseBlogModel):
-    text = models.TextField()
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.text
-    
-    class Meta:
-        verbose_namee_plural = 'Комментарии'
+class Category(BaseBlogModel):
+    title=
+    description=
+    slug=
+
+class Location(BaseBlogModel):
+    name=
