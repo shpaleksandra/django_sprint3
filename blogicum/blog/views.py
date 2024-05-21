@@ -1,16 +1,7 @@
 from django.shortcuts import render
+from django.http import Http404
 
-def index(request):
-    template_name = 'blog/index.html'
-    return render(request, template_name)
-
-def post_detail(request):
-    template_name = 'blog/detail.html'    
-    return render(request, template_name) 
-
-def category_posts(request):
-    template_name = 'blog/category.html'
-    posts = [
+posts = [
     {
         'id': 0,
         'location': 'Остров отчаянья',
@@ -51,8 +42,27 @@ def category_posts(request):
                 Весь этот день я хлопотал  около вещей: укрывал и
                 укутывал их, чтобы не испортились от дождя.''',
     },
-    ]
-    context = {
-        'posts': posts
-    }    
+]
+
+posts_dict = {post['id']: post for post in posts}
+
+
+def index(request):
+    template_name = 'blog/index.html'
+    context = {'posts': reversed(posts)}
+    return render(request, template_name, context)
+
+
+def post_detail(request, id):
+    template_name = 'blog/detail.html'
+    try:
+        context = {'post': posts_dict[id]}
+    except KeyError:
+        raise Http404("Такого поста не существует")
+    return render(request, template_name, context)
+
+
+def category_posts(request, category_slug):
+    template_name = 'blog/category.html'
+    context = {'category_slug': category_slug}
     return render(request, template_name, context)
