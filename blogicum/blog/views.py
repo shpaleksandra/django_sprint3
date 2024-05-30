@@ -1,23 +1,36 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.http import Http404
+from .models import Category, Post
+from django.utils import timezone
 
 
 def index(request):
-    template_name = 'blog/index.html'
-    context = {'posts': reversed(posts)}
-    return render(request, template_name, context)
+    post_list = Post.objects.filter(
+        pub_date__lte=timezone.now(),
+        is_published=True,
+        category__is_published=True
+    ).order_by('-pub_date')[:5]
+    return render(request, 'blog/index.html', {'post_list': post_list})
 
 
 def post_detail(request, id):
-    template_name = 'blog/detail.html'
-    try:
-        context = {'post': posts_dict[id]}
-    except KeyError:
-        raise Http404("Такого поста не существует")
-    return render(request, template_name, context)
+    post = get_object_or_404(Post.objects.filter(
+        pub_date__lte=timezone.now(),
+        is_published=True,
+        category__is_published=True), pk=id)
+    return render(request, 'blog/detail.html', {'post': post})
 
 
 def category_posts(request, category_slug):
-    template_name = 'blog/category.html'
-    context = {'category_slug': category_slug}
-    return render(request, template_name, context)
+    category = get_object_or_404(Category.objects.filter(is_published=True),
+                                 slug=category_slug)
+    posts = Post.objects.filter(
+        category=category,
+        pub_date__lte=timezone.now(),
+        is_published=True
+    )
+    context = {
+        'category': category,
+        'post_list': posts
+    }
+    return render(request, 'blog/category.html', context)
