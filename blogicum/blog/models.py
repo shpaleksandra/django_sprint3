@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-import blogicum.settings as settings
+from django.conf import settings
 
 User = get_user_model()
 
@@ -29,7 +29,7 @@ class Category(BaseBlogModel):
         max_length=settings.MAX_LENGTH,
         blank=True,
     )
-    description = models.TextField('Описание', default='')
+    description = models.TextField('Описание', blank=True)
     slug = models.SlugField(
         'Идентификатор',
         unique=True,
@@ -86,7 +86,7 @@ class Post(BaseBlogModel):
     )
 
     def __str__(self):
-        return self.text
+        return self.text[:100]
 
     class Meta:
         verbose_name = 'публикация'
